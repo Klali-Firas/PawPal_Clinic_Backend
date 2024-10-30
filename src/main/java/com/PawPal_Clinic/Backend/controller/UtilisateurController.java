@@ -49,4 +49,22 @@ public class UtilisateurController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/veterinaire/{id}")
+    public ResponseEntity<UtilisateurDto> getVeterinaireById(@PathVariable Integer id) {
+        Optional<UtilisateurDto> veterinaire = utilisateurService.getVeterinaireById(id);
+        return veterinaire.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/proprietaire/animal/{animalId}")
+    public ResponseEntity<UtilisateurDto> getProprietaireByAnimalId(@PathVariable Integer animalId) {
+        Optional<UtilisateurDto> proprietaire = utilisateurService.getProprietaireByAnimalId(animalId);
+        return proprietaire.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/veterinaires")
+    public ResponseEntity<List<UtilisateurDto>> getAllVeterinaires() {
+        List<UtilisateurDto> veterinaires = utilisateurService.getAllVeterinaires();
+        return ResponseEntity.ok(veterinaires);
+    }
 }

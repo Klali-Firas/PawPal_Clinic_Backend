@@ -49,4 +49,10 @@ public class RendezVousController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{rendezVousId}/assign-veterinaire/{veterinaireId}")
+    public ResponseEntity<RendezVousDto> assignVeterinaire(@PathVariable Integer rendezVousId, @PathVariable Integer veterinaireId) {
+        Optional<RendezVousDto> updatedRendezVous = rendezVousService.assignVeterinaire(rendezVousId, veterinaireId);
+        return updatedRendezVous.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
