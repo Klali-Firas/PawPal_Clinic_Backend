@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +54,9 @@ public class RendezVousService {
     @Transactional
     public RendezVousDto createRendezVous(RendezVousDto rendezVousDto) {
         RendezVous rendezVous = convertToEntity(rendezVousDto);
+        if (rendezVousDto.getVeterinaireId() != null) {
+            rendezVous.setVeterinaire(utilisateurRepository.findById(rendezVousDto.getVeterinaireId()).orElseThrow());
+        }
         RendezVous savedRendezVous = rendezVousRepository.save(rendezVous);
         entityManager.refresh(savedRendezVous);
         return convertToDto(savedRendezVous);
@@ -131,9 +135,12 @@ public class RendezVousService {
         RendezVous rendezVous = new RendezVous();
         rendezVous.setAnimal(animauxRepository.findById(rendezVousDto.getAnimalId()).orElseThrow());
         if (rendezVousDto.getVeterinaireId() != null) {
+            System.out.println("called");
             rendezVous.setVeterinaire(utilisateurRepository.findById(rendezVousDto.getVeterinaireId()).orElseThrow());
+        }else {
+            rendezVous.setVeterinaire(null);
         }
-        rendezVous.setDateRendezVous(rendezVousDto.getDateRendezVous());
+        rendezVous.setDateRendezVous(Instant.parse(rendezVousDto.getDateRendezVous().toString()));
         rendezVous.setStatut(rendezVousDto.getStatut());
         rendezVous.setMotif(rendezVousDto.getMotif());
         rendezVous.setCreeLe(rendezVousDto.getCreeLe());

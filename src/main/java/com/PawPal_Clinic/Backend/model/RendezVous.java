@@ -20,7 +20,7 @@ public class RendezVous {
     @JoinColumn(name = "animal_id", nullable = false)
     private Animaux animal;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "veterinaire_id")
     private Utilisateur veterinaire;
 
