@@ -7,14 +7,19 @@ import com.PawPal_Clinic.Backend.model.Utilisateur;
 import com.PawPal_Clinic.Backend.repository.RendezVousRepository;
 import com.PawPal_Clinic.Backend.repository.AnimauxRepository;
 import com.PawPal_Clinic.Backend.repository.UtilisateurRepository;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -95,27 +100,40 @@ public class RendezVousService {
             RendezVous updatedRendezVous = rendezVousRepository.save(rendezVous);
 
             // Send email to the vet
-            sendEmailToVet(veterinaire.getEmail(), updatedRendezVous);
+            sendEmailToVet(veterinaire, updatedRendezVous);
 
             return Optional.of(convertToDto(updatedRendezVous));
         }
         return Optional.empty();
     }
 
-    private void sendEmailToVet(String vetEmail, RendezVous rendezVous) {
+    private void sendEmailToVet(Utilisateur vet, RendezVous rendezVous)  {
         UtilisateurDto client = utilisateurService.getProprietaireByAnimalId(rendezVous.getAnimal().getId()).get();
-        SimpleMailMessage message = new SimpleMailMessage();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd, MM yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
 
-        message.setTo(vetEmail);
-        message.setSubject("New RendezVous Assigned");
-        message.setText("Dear Veterinaire,\n\nYou have been assigned a new RendezVous.\n\nDetails:\n" +
-                "RendezVous ID: " + rendezVous.getId() + "\n" +
-                "Date & Time: " + LocalDateTime.ofInstant(rendezVous.getDateRendezVous(), ZoneId.systemDefault()).format(formatter) + "\n" +
-                "Client: " + client.getNom() +' '+client.getPrenom() + "\n" +
-                "Animal: " + rendezVous.getAnimal().getNom() + " " + rendezVous.getAnimal().getRace() + "\n\n" +
-                "Please confirm your availability.\n\nThank you.");
-        emailSender.send(message);
+
+        String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/email-template.html")));
+
+        String emailContent = template
+                .replace("{{vetName}}", vet.getNom() + " " + vet.getPrenom())
+                .replace("{{appointmentDate}}", LocalDateTime.ofInstant(rendezVous.getDateRendezVous(), ZoneId.systemDefault()).format(dateFormatter))
+                .replace("{{appointmentTime}}", LocalDateTime.ofInstant(rendezVous.getDateRendezVous(), ZoneId.systemDefault()).format(timeFormatter))
+                .replace("{{clientName}}", client.getNom() + " " + client.getPrenom())
+                .replace("{{animalName}}", rendezVous.getAnimal().getNom())
+                .replace("{{animalRace}}", rendezVous.getAnimal().getRace());
+
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(vet.getEmail());
+        helper.setSubject("Nouvelle Notification de Rendez-vous");
+        helper.setText(emailContent, true); // true indicates HTML content
+        emailSender.send(mimeMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private RendezVousDto convertToDto(RendezVous rendezVous) {
