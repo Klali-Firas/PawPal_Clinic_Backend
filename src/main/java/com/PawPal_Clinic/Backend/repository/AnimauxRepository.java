@@ -11,11 +11,7 @@ import java.util.Optional;
 
 public interface AnimauxRepository extends JpaRepository<Animaux, Integer> {
 
-//    @Query("SELECT a FROM Animaux a LEFT JOIN FETCH a.proprietaire WHERE a.id = :id")
-//    Optional<Animaux> findById(@Param("id") Integer id);
-
-//    @Query("SELECT a FROM Animaux a LEFT JOIN FETCH a.proprietaire")
-//    List<Animaux> findAll();
+    List<Animaux> findByProprietaireId(Integer proprietaireId);
 
     Optional<Animaux> findAnimauxByProprietaire(Utilisateur proprietaire);
 }

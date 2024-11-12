@@ -107,6 +107,14 @@ public class RendezVousService {
         return Optional.empty();
     }
 
+    @Transactional(readOnly = true)
+    public List<RendezVousDto> getRendezVousByVeterinaireId(Integer veterinaireId) {
+        return rendezVousRepository.findByVeterinaireId(veterinaireId)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private void sendEmailToVet(Utilisateur vet, RendezVous rendezVous)  {
         UtilisateurDto client = utilisateurService.getProprietaireByAnimalId(rendezVous.getAnimal().getId()).get();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd, MM yyyy");

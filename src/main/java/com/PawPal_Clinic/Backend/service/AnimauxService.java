@@ -68,6 +68,14 @@ public class AnimauxService {
         return false;
     }
 
+    @Transactional(readOnly = true)
+    public List<AnimauxDto> getAnimauxByProprietaireId(Integer proprietaireId) {
+        return animauxRepository.findByProprietaireId(proprietaireId)
+                .stream()
+                .map(animaux -> new AnimauxDto(animaux.getId(), animaux.getProprietaire().getId(), animaux.getNom(), animaux.getRace(), animaux.getAge(), animaux.getHistoriqueMedical(), animaux.getCreeLe()))
+                .collect(Collectors.toList());
+    }
+
     private AnimauxDto convertToDTO(Animaux animaux) {
         AnimauxDto dto = new AnimauxDto(animaux.getId(),animaux.getProprietaire().getId(),animaux.getNom(), animaux.getRace(), animaux.getAge(), animaux.getHistoriqueMedical(), animaux.getCreeLe());
 

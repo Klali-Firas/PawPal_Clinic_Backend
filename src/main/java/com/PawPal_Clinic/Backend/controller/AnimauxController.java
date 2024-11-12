@@ -47,4 +47,12 @@ public class AnimauxController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/proprietaire/{proprietaireId}")
+    public ResponseEntity<List<AnimauxDto>> getAnimauxByProprietaireId(@PathVariable Integer proprietaireId) {
+        List<AnimauxDto> animaux = animauxService.getAnimauxByProprietaireId(proprietaireId);
+        if (animaux.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(animaux);
+    }
 }
