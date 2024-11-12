@@ -2,6 +2,7 @@ package com.PawPal_Clinic.Backend.service;
 
 import com.PawPal_Clinic.Backend.dto.ServicesAnimauxDto;
 import com.PawPal_Clinic.Backend.model.ServicesAnimaux;
+import com.PawPal_Clinic.Backend.model.Utilisateur;
 import com.PawPal_Clinic.Backend.repository.ServicesAnimauxRepository;
 import com.PawPal_Clinic.Backend.repository.AnimauxRepository;
 import com.PawPal_Clinic.Backend.repository.UtilisateurRepository;
@@ -71,23 +72,29 @@ public class ServicesAnimauxService {
     }
 
     private ServicesAnimauxDto convertToDto(ServicesAnimaux servicesAnimaux) {
-        return new ServicesAnimauxDto(
-                servicesAnimaux.getId(),
-                servicesAnimaux.getAnimal().getId(),
-                servicesAnimaux.getVeterinaire().getId(),
-                servicesAnimaux.getService().getId(),
-                servicesAnimaux.getDateService(),
-                servicesAnimaux.getRemarques()
-        );
-    }
+    Integer veterinaireId = servicesAnimaux.getVeterinaire() != null ? servicesAnimaux.getVeterinaire().getId() : null;
+    return new ServicesAnimauxDto(
+            servicesAnimaux.getId(),
+            servicesAnimaux.getAnimal().getId(),
+            veterinaireId,
+            servicesAnimaux.getService().getId(),
+            servicesAnimaux.getDateService(),
+            servicesAnimaux.getRemarques()
+    );
+}
 
     private ServicesAnimaux convertToEntity(ServicesAnimauxDto servicesAnimauxDto) {
-        ServicesAnimaux servicesAnimaux = new ServicesAnimaux();
-        servicesAnimaux.setAnimal(animauxRepository.findById(servicesAnimauxDto.getAnimalId()).orElseThrow());
-        servicesAnimaux.setVeterinaire(utilisateurRepository.findById(servicesAnimauxDto.getVeterinaireId()).orElseThrow());
-        servicesAnimaux.setService(serviceRepository.findById(servicesAnimauxDto.getServiceId()).orElseThrow());
-        servicesAnimaux.setDateService(servicesAnimauxDto.getDateService());
-        servicesAnimaux.setRemarques(servicesAnimauxDto.getRemarques());
-        return servicesAnimaux;
+    ServicesAnimaux servicesAnimaux = new ServicesAnimaux();
+    servicesAnimaux.setAnimal(animauxRepository.findById(servicesAnimauxDto.getAnimalId()).orElseThrow());
+
+    Integer veterinaireId = servicesAnimauxDto.getVeterinaireId();
+    if (veterinaireId != null) {
+       Optional<Utilisateur> optionalVeterinaire = utilisateurRepository.findById(veterinaireId);
+       optionalVeterinaire.ifPresent(servicesAnimaux::setVeterinaire);
     }
+    servicesAnimaux.setService(serviceRepository.findById(servicesAnimauxDto.getServiceId()).orElseThrow());
+    servicesAnimaux.setDateService(servicesAnimauxDto.getDateService());
+    servicesAnimaux.setRemarques(servicesAnimauxDto.getRemarques());
+    return servicesAnimaux;
+}
 }

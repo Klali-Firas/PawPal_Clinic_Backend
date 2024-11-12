@@ -18,8 +18,8 @@ public class ServicesAnimaux {
     @JoinColumn(name = "animal_id", nullable = false)
     private Animaux animal;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "veterinaire_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinaire_id")
     private Utilisateur veterinaire;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
