@@ -6,12 +6,12 @@ import com.PawPal_Clinic.Backend.model.RendezVous;
 import com.PawPal_Clinic.Backend.model.Utilisateur;
 import com.PawPal_Clinic.Backend.repository.RendezVousRepository;
 import com.PawPal_Clinic.Backend.repository.AnimauxRepository;
+import com.PawPal_Clinic.Backend.repository.ServiceRepository;
 import com.PawPal_Clinic.Backend.repository.UtilisateurRepository;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,8 @@ public class RendezVousService {
     private AnimauxRepository animauxRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private ServiceRepository serviceRepository;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -152,8 +154,9 @@ public class RendezVousService {
                 veterinaireId,
                 rendezVous.getDateRendezVous(),
                 rendezVous.getStatut(),
-                rendezVous.getMotif(),
-                rendezVous.getCreeLe()
+                rendezVous.getMotif().getId(),
+                rendezVous.getCreeLe(),
+                rendezVous.getRemarques()
         );
     }
 
@@ -168,8 +171,9 @@ public class RendezVousService {
         }
         rendezVous.setDateRendezVous(Instant.parse(rendezVousDto.getDateRendezVous().toString()));
         rendezVous.setStatut(rendezVousDto.getStatut());
-        rendezVous.setMotif(rendezVousDto.getMotif());
+        rendezVous.setMotif(serviceRepository.findById(rendezVousDto.getMotif()).get());
         rendezVous.setCreeLe(rendezVousDto.getCreeLe());
+        rendezVous.setRemarques(rendezVousDto.getRemarques());
         return rendezVous;
     }
 }

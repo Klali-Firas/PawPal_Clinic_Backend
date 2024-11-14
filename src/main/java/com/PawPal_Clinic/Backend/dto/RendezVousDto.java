@@ -13,10 +13,12 @@ public class RendezVousDto implements Serializable {
     private  Integer veterinaireId;
     private  Instant dateRendezVous;
     private  String statut;
-    private  String motif;
+    private  Integer motif;
     private  Instant creeLe;
+    private  String remarques;
 
-    public RendezVousDto(Integer id, Integer animalId, Integer veterinaireId, Instant dateRendezVous, String statut, String motif, Instant creeLe) {
+
+    public RendezVousDto(Integer id, Integer animalId, Integer veterinaireId, Instant dateRendezVous, String statut, Integer motif, Instant creeLe, String remarques) {
         this.id = id;
         this.animalId = animalId;
         this.veterinaireId = veterinaireId;
@@ -24,7 +26,9 @@ public class RendezVousDto implements Serializable {
         this.statut = statut;
         this.motif = motif;
         this.creeLe = creeLe;
+        this.remarques = remarques;
     }
+
 
     public RendezVousDto() {
     }
@@ -48,7 +52,7 @@ public class RendezVousDto implements Serializable {
         return statut;
     }
 
-    public String getMotif() {
+    public Integer getMotif() {
         return motif;
     }
 
@@ -68,6 +72,14 @@ public class RendezVousDto implements Serializable {
                 Objects.equals(this.statut, entity.statut) &&
                 Objects.equals(this.motif, entity.motif) &&
                 Objects.equals(this.creeLe, entity.creeLe);
+    }
+
+    public String getRemarques() {
+        return remarques;
+    }
+
+    public void setRemarques(String remarques) {
+        this.remarques = remarques;
     }
 
     @Override
