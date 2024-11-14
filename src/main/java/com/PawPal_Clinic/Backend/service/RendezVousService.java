@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,6 +46,8 @@ public class RendezVousService {
     private UtilisateurService utilisateurService;
     @Autowired
     private JavaMailSender emailSender;
+    @Autowired
+    private GoogleCalendarService googleCalendarService;
 
     @Transactional(readOnly = true)
     public List<RendezVousDto> getAllRendezVous() {
@@ -104,6 +107,20 @@ public class RendezVousService {
             // Send email to the vet
             sendEmailToVet(veterinaire, updatedRendezVous);
 
+            // Add event to Google Calendar
+            try {
+                UtilisateurDto client = utilisateurService.getProprietaireByAnimalId(rendezVous.getAnimal().getId()).get();
+                googleCalendarService.addEventToCalendar(
+                        client.getEmail(),
+                        "Rendez-vous with " + veterinaire.getNom() + " " + veterinaire.getPrenom(),
+                        "Appointment for " + rendezVous.getAnimal().getNom(),
+                        Date.from(rendezVous.getDateRendezVous()),
+                        Date.from(rendezVous.getDateRendezVous().plusSeconds(3600)), // Assuming 1-hour duration
+                        client.getEmail()
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return Optional.of(convertToDto(updatedRendezVous));
         }
         return Optional.empty();

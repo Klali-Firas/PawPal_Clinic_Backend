@@ -4,19 +4,17 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * DTO for {@link com.PawPal_Clinic.Backend.model.Utilisateur}
- */
 public class UtilisateurDto implements Serializable {
-    private  Integer id;
-    private  String email;
-    private  String role;
-    private  String prenom;
-    private  String nom;
-    private  String telephone;
-    private  Instant creeLe;
+    private Integer id;
+    private String email;
+    private String role;
+    private String prenom;
+    private String nom;
+    private String telephone;
+    private Instant creeLe;
+    private String refreshToken;
 
-    public UtilisateurDto(Integer id, String email,  String role, String prenom, String nom, String telephone, Instant creeLe) {
+    public UtilisateurDto(Integer id, String email, String role, String prenom, String nom, String telephone, Instant creeLe, String refreshToken) {
         this.id = id;
         this.email = email;
         this.role = role;
@@ -24,10 +22,13 @@ public class UtilisateurDto implements Serializable {
         this.nom = nom;
         this.telephone = telephone;
         this.creeLe = creeLe;
+        this.refreshToken = refreshToken;
     }
 
     public UtilisateurDto() {
     }
+
+    // Getters and setters for all fields, including refreshToken
     public Integer getId() {
         return id;
     }
@@ -35,7 +36,6 @@ public class UtilisateurDto implements Serializable {
     public String getEmail() {
         return email;
     }
-
 
     public String getRole() {
         return role;
@@ -57,6 +57,14 @@ public class UtilisateurDto implements Serializable {
         return creeLe;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,12 +76,13 @@ public class UtilisateurDto implements Serializable {
                 Objects.equals(this.prenom, entity.prenom) &&
                 Objects.equals(this.nom, entity.nom) &&
                 Objects.equals(this.telephone, entity.telephone) &&
-                Objects.equals(this.creeLe, entity.creeLe);
+                Objects.equals(this.creeLe, entity.creeLe) &&
+                Objects.equals(this.refreshToken, entity.refreshToken);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email,  role, prenom, nom, telephone, creeLe);
+        return Objects.hash(id, email, role, prenom, nom, telephone, creeLe, refreshToken);
     }
 
     @Override
@@ -85,6 +94,7 @@ public class UtilisateurDto implements Serializable {
                 "prenom = " + prenom + ", " +
                 "nom = " + nom + ", " +
                 "telephone = " + telephone + ", " +
-                "creeLe = " + creeLe + ")";
+                "creeLe = " + creeLe + ", " +
+                "refreshToken = " + refreshToken + ")";
     }
 }

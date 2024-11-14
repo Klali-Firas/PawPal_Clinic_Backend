@@ -6,7 +6,9 @@ import com.PawPal_Clinic.Backend.service.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +34,10 @@ public class AuthController {
 
     @GetMapping("/user")
     public ResponseEntity<Map<String, Object>> getUser(
-            OAuth2AuthenticationToken authentication,
+            @AuthenticationPrincipal OAuth2User user,
+            @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient,
             @RequestParam(required = false) String accountType // Optional parameter to get account type
     ) {
-        OAuth2User user = authentication.getPrincipal();
 
         // Extract user details from Google
         String email = user.getAttribute("email");
@@ -56,11 +58,22 @@ public class AuthController {
             }
 
             // Create and save new user with the specified account type
-            UtilisateurDto utilisateurDto = new UtilisateurDto(null, email, accountType, prenom, nom, null, null);
+            String refreshToken = authorizedClient.getRefreshToken().getTokenValue();
+
+            UtilisateurDto utilisateurDto = new UtilisateurDto(null, email, accountType, prenom, nom, null, null, refreshToken);
             utilisateurService.createUtilisateur(utilisateurDto);
             response.put("user", utilisateurDto);
         } else {
-            response.put("user", existingUser.get());
+            UtilisateurDto utilisateurDto = existingUser.get();
+            // Check if the user has a refresh token
+            if (utilisateurDto.getRefreshToken() == null || utilisateurDto.getRefreshToken().isEmpty()) {
+                String refreshToken = authorizedClient.getRefreshToken().getTokenValue();
+
+                // Update the user with the new refresh token
+                utilisateurDto.setRefreshToken(refreshToken);
+                utilisateurService.updateUtilisateur(utilisateurDto.getId(), utilisateurDto);
+            }
+            response.put("user", utilisateurDto);
         }
 
         // Generate and include JWT token
@@ -70,12 +83,12 @@ public class AuthController {
 
         try {
             // Log user details
-            System.out.println(jacksonObjectMapper.writeValueAsString(user));
+            System.out.println(user);
+            System.out.println(authorizedClient.getRefreshToken().getTokenValue());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return ResponseEntity.ok(response);
     }
-
 }

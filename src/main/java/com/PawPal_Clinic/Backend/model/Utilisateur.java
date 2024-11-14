@@ -1,8 +1,5 @@
 package com.PawPal_Clinic.Backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -11,8 +8,6 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "utilisateurs")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Utilisateur implements Serializable {
     @Id
     @ColumnDefault("nextval('utilisateurs_utilisateur_id_seq'::regclass)")
@@ -39,9 +34,10 @@ public class Utilisateur implements Serializable {
     @Column(name = "cree_le", insertable = false, updatable = false)
     private Instant creeLe;
 
-    public Utilisateur() {
-    }
+    @Column(name = "refresh_token", length = 500)
+    private String refreshToken;
 
+    // Getters and setters for all fields, including refreshToken
     public Integer getId() {
         return id;
     }
@@ -57,8 +53,6 @@ public class Utilisateur implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
-
-
 
     public String getRole() {
         return role;
@@ -100,4 +94,11 @@ public class Utilisateur implements Serializable {
         this.creeLe = creeLe;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

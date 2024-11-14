@@ -98,6 +98,15 @@ public class UtilisateurService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void saveRefreshToken(String email, String refreshToken) {
+        Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByEmail(email);
+        if (utilisateurOpt.isPresent()) {
+            Utilisateur utilisateur = utilisateurOpt.get();
+            utilisateur.setRefreshToken(refreshToken);
+            utilisateurRepository.save(utilisateur);
+        }
+    }
 
     private UtilisateurDto convertToDto(Utilisateur utilisateur) {
         return new UtilisateurDto(
@@ -107,7 +116,8 @@ public class UtilisateurService {
                 utilisateur.getPrenom(),
                 utilisateur.getNom(),
                 utilisateur.getTelephone(),
-                utilisateur.getCreeLe()
+                utilisateur.getCreeLe(),
+                utilisateur.getRefreshToken()
         );
     }
 
@@ -119,6 +129,7 @@ public class UtilisateurService {
         utilisateur.setNom(utilisateurDto.getNom());
         utilisateur.setTelephone(utilisateurDto.getTelephone());
         utilisateur.setCreeLe(utilisateurDto.getCreeLe());
+        utilisateur.setRefreshToken(utilisateurDto.getRefreshToken());
         return utilisateur;
     }
 }
