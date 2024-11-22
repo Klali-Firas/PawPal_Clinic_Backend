@@ -12,11 +12,13 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);  // Allow credentials for specific origin
-        config.addAllowedOrigin("http://localhost:4200"); // Allow only your front-end origin
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-
+        config.setAllowCredentials(true);  // Allow credentials for specific origins
+        config.addAllowedOrigin("http://localhost:4200"); // Allow front-end origin
+        config.addAllowedOrigin("https://accounts.google.com"); 
+        config.addAllowedOriginPattern("*"); // Alternatively, allow any origin pattern (use cautiously in production)
+        config.addAllowedHeader("*"); // Allow all headers
+        config.addAllowedMethod("*"); // Allow all HTTP methods
+    
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);  // Apply CORS configuration to all endpoints
         return source;

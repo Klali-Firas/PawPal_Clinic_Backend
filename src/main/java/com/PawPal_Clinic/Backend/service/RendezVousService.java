@@ -63,6 +63,7 @@ public class RendezVousService {
             rendezVous.setVeterinaire(utilisateurRepository.findById(rendezVousDto.getVeterinaireId()).orElseThrow());
         }
         RendezVous savedRendezVous = rendezVousRepository.save(rendezVous);
+        
         entityManager.refresh(savedRendezVous);
         return convertToDto(savedRendezVous);
     }

@@ -24,16 +24,18 @@ public class SecurityConfig {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
+   
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))  // Apply CORS configurations
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
-                        .requestMatchers("/", "/api/public/**").permitAll()
+                        .requestMatchers("/", "/api/public/**").permitAll() // Allow public access to the /api/public/** endpoints
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
+               .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
                                 .authorizationRequestResolver(authorizationRequestResolver(clientRegistrationRepository))
                         )
@@ -49,12 +51,11 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/logout").ignoringRequestMatchers("/api/**") // Disable CSRF for the logout endpoint
+                        .ignoringRequestMatchers("/logout", "/api/**") // Disable CSRF for the logout endpoint and /api/** paths
                 );
-
+    
         return http.build();
     }
-
     @Bean
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository) {
         DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
