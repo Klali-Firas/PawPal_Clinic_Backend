@@ -49,4 +49,19 @@ public class RendezVousController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{rendezVousId}/assign-veterinaire/{veterinaireId}")
+    public ResponseEntity<RendezVousDto> assignVeterinaire(@PathVariable Integer rendezVousId, @PathVariable Integer veterinaireId) {
+        Optional<RendezVousDto> updatedRendezVous = rendezVousService.assignVeterinaire(rendezVousId, veterinaireId);
+        return updatedRendezVous.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/veterinaire/{veterinaireId}")
+    public ResponseEntity<List<RendezVousDto>> getRendezVousByVeterinaireId(@PathVariable Integer veterinaireId) {
+        List<RendezVousDto> rendezVous = rendezVousService.getRendezVousByVeterinaireId(veterinaireId);
+        if (rendezVous.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(rendezVous);
+    }
 }

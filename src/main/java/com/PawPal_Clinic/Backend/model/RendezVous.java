@@ -20,8 +20,8 @@ public class RendezVous {
     @JoinColumn(name = "animal_id", nullable = false)
     private Animaux animal;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "veterinaire_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "veterinaire_id")
     private Utilisateur veterinaire;
 
     @Column(name = "date_rendez_vous", nullable = false)
@@ -30,12 +30,16 @@ public class RendezVous {
     @Column(name = "statut", nullable = false, length = 20)
     private String statut;
 
-    @Column(name = "motif", length = Integer.MAX_VALUE)
-    private String motif;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "motif", nullable = false)
+    private Service motif;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "cree_le", insertable = false, updatable = false)
     private Instant creeLe;
+
+    @Column(name = "remarques", length = Integer.MAX_VALUE)
+    private String remarques;
 
     public Integer getId() {
         return id;
@@ -77,11 +81,11 @@ public class RendezVous {
         this.statut = statut;
     }
 
-    public String getMotif() {
+    public Service getMotif() {
         return motif;
     }
 
-    public void setMotif(String motif) {
+    public void setMotif(Service motif) {
         this.motif = motif;
     }
 
@@ -93,4 +97,11 @@ public class RendezVous {
         this.creeLe = creeLe;
     }
 
+    public String getRemarques() {
+        return remarques;
+    }
+
+    public void setRemarques(String remarques) {
+        this.remarques = remarques;
+    }
 }

@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
 @Configuration
 public class SecurityConfig {
@@ -60,10 +59,13 @@ public class SecurityConfig {
         DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
         resolver.setAuthorizationRequestCustomizer(customizer -> customizer.additionalParameters(params -> {
+            params.put("access_type", "offline");
+
             // Check if the user has previously logged in
             boolean userPreviouslyLoggedIn = checkUserPreviouslyLoggedIn();
             if (!userPreviouslyLoggedIn) {
                 params.put("prompt", "consent");
+
             }
         }));
         return resolver;

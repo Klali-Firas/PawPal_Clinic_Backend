@@ -1,7 +1,9 @@
 package com.PawPal_Clinic.Backend.service;
 
 import com.PawPal_Clinic.Backend.dto.UtilisateurDto;
+import com.PawPal_Clinic.Backend.model.Animaux;
 import com.PawPal_Clinic.Backend.model.Utilisateur;
+import com.PawPal_Clinic.Backend.repository.AnimauxRepository;
 import com.PawPal_Clinic.Backend.repository.UtilisateurRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,6 +22,8 @@ public class UtilisateurService {
     private UtilisateurRepository utilisateurRepository;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private AnimauxRepository animauxRepository;
 
     @Transactional(readOnly = true)
     public List<UtilisateurDto> getAllUtilisateurs() {
@@ -66,6 +70,44 @@ public class UtilisateurService {
         return false;
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UtilisateurDto> getVeterinaireById(Integer id) {
+        return utilisateurRepository.findById(id)
+                .filter(utilisateur -> "veterinaire".equals(utilisateur.getRole()))
+                .map(this::convertToDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UtilisateurDto> getProprietaireByAnimalId(Integer animalId) {
+        Optional<Animaux> animal = animauxRepository.findById(animalId);
+        if (animal.isPresent()) {
+            Utilisateur proprietaire = animal.get().getProprietaire();
+            if (proprietaire != null) {
+                return Optional.of(convertToDto(proprietaire));
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<UtilisateurDto> getAllVeterinaires() {
+        return utilisateurRepository.findAll().stream()
+                .filter(utilisateur -> "veterinaire".equals(utilisateur.getRole()))
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void saveRefreshToken(String email, String refreshToken) {
+        Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByEmail(email);
+        if (utilisateurOpt.isPresent()) {
+            Utilisateur utilisateur = utilisateurOpt.get();
+            utilisateur.setRefreshToken(refreshToken);
+            utilisateurRepository.save(utilisateur);
+        }
+    }
+
     private UtilisateurDto convertToDto(Utilisateur utilisateur) {
         return new UtilisateurDto(
                 utilisateur.getId(),
@@ -74,7 +116,8 @@ public class UtilisateurService {
                 utilisateur.getPrenom(),
                 utilisateur.getNom(),
                 utilisateur.getTelephone(),
-                utilisateur.getCreeLe()
+                utilisateur.getCreeLe(),
+                utilisateur.getRefreshToken()
         );
     }
 
@@ -86,6 +129,7 @@ public class UtilisateurService {
         utilisateur.setNom(utilisateurDto.getNom());
         utilisateur.setTelephone(utilisateurDto.getTelephone());
         utilisateur.setCreeLe(utilisateurDto.getCreeLe());
+        utilisateur.setRefreshToken(utilisateurDto.getRefreshToken());
         return utilisateur;
     }
 }
