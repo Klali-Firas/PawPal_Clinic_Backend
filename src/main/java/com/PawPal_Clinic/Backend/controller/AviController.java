@@ -28,6 +28,15 @@ public class AviController {
         return avi.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/rendezvous/{rendezVousId}")
+    public ResponseEntity<List<AviDto>> getAvisByRendezVousId(@PathVariable Integer rendezVousId) {
+        List<AviDto> avis = aviService.getAvisByRendezVousId(rendezVousId);
+        if (avis.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(avis);
+    }
+
     @PostMapping
     public ResponseEntity<AviDto> createAvi(@RequestBody AviDto aviDto) {
         AviDto createdAvi = aviService.createAvi(aviDto);
@@ -48,5 +57,10 @@ public class AviController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/rendezvous/{rendezVousId}/proprietaire/{proprietaireId}")
+    public ResponseEntity<AviDto> getAviByRendezVousIdAndProprietaireId(@PathVariable Integer rendezVousId, @PathVariable Integer proprietaireId) {
+        Optional<AviDto> avi = aviService.getAviByRendezVousIdAndProprietaireId(rendezVousId, proprietaireId);
+        return avi.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
