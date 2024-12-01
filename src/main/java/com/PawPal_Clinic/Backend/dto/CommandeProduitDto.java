@@ -12,14 +12,12 @@ public class CommandeProduitDto implements Serializable {
     private  Integer commandeId;
     private  Integer produitId;
     private  Integer quantite;
-    private  BigDecimal prix;
 
-    public CommandeProduitDto(Integer id, Integer commandeId, Integer produitId, Integer quantite, BigDecimal prix) {
+    public CommandeProduitDto(Integer id, Integer commandeId, Integer produitId, Integer quantite) {
         this.id = id;
         this.commandeId = commandeId;
         this.produitId = produitId;
         this.quantite = quantite;
-        this.prix = prix;
     }
 
     public CommandeProduitDto() {
@@ -40,9 +38,6 @@ public class CommandeProduitDto implements Serializable {
         return quantite;
     }
 
-    public BigDecimal getPrix() {
-        return prix;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -52,13 +47,11 @@ public class CommandeProduitDto implements Serializable {
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.commandeId, entity.commandeId) &&
                 Objects.equals(this.produitId, entity.produitId) &&
-                Objects.equals(this.quantite, entity.quantite) &&
-                Objects.equals(this.prix, entity.prix);
-    }
+                Objects.equals(this.quantite, entity.quantite);}
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, commandeId, produitId, quantite, prix);
+        return Objects.hash(id, commandeId, produitId, quantite);
     }
 
     @Override
@@ -67,7 +60,6 @@ public class CommandeProduitDto implements Serializable {
                 "id = " + id + ", " +
                 "commandeId = " + commandeId + ", " +
                 "produitId = " + produitId + ", " +
-                "quantite = " + quantite + ", " +
-                "prix = " + prix + ")";
+                "quantite = " + quantite +  ")";
     }
 }

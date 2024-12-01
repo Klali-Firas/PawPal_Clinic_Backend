@@ -5,28 +5,30 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * DTO for {@link com.PawPal_Clinic.Backend.model.Produit}
- */
 public class ProduitDto implements Serializable {
-    private  Integer id;
-    private  String nomProduit;
-    private  String description;
-    private  BigDecimal prix;
-    private  Integer quantiteStock;
-    private  Instant creeLe;
+    private Integer id;
+    private String nomProduit;
+    private String description;
+    private BigDecimal prix;
+    private Integer quantiteStock;
+    private Instant creeLe;
+    private String image;
 
-    public ProduitDto(Integer id, String nomProduit, String description, BigDecimal prix, Integer quantiteStock, Instant creeLe) {
+    public ProduitDto(Integer id, String nomProduit, String description, BigDecimal prix, Integer quantiteStock, Instant creeLe, String image) {
         this.id = id;
         this.nomProduit = nomProduit;
         this.description = description;
         this.prix = prix;
         this.quantiteStock = quantiteStock;
         this.creeLe = creeLe;
+        this.image = image;
     }
 
     public ProduitDto() {
     }
+
+    // Getters and setters...
+
     public Integer getId() {
         return id;
     }
@@ -51,6 +53,14 @@ public class ProduitDto implements Serializable {
         return creeLe;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,12 +71,13 @@ public class ProduitDto implements Serializable {
                 Objects.equals(this.description, entity.description) &&
                 Objects.equals(this.prix, entity.prix) &&
                 Objects.equals(this.quantiteStock, entity.quantiteStock) &&
-                Objects.equals(this.creeLe, entity.creeLe);
+                Objects.equals(this.creeLe, entity.creeLe) &&
+                Objects.equals(this.image, entity.image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nomProduit, description, prix, quantiteStock, creeLe);
+        return Objects.hash(id, nomProduit, description, prix, quantiteStock, creeLe, image);
     }
 
     @Override
@@ -77,6 +88,7 @@ public class ProduitDto implements Serializable {
                 "description = " + description + ", " +
                 "prix = " + prix + ", " +
                 "quantiteStock = " + quantiteStock + ", " +
-                "creeLe = " + creeLe + ")";
+                "creeLe = " + creeLe + ", " +
+                "image = " + image + ")";
     }
 }

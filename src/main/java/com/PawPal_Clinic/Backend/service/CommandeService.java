@@ -64,6 +64,12 @@ public class CommandeService {
         }
         return false;
     }
+    @Transactional(readOnly = true)
+    public List<CommandeDto> getCommandesByUserId(Integer userId) {
+        return commandeRepository.findByProprietaireId(userId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
     private CommandeDto convertToDto(Commande commande) {
         return new CommandeDto(commande.getId(), commande.getProprietaire().getId(), commande.getDateCommande(), commande.getStatut());

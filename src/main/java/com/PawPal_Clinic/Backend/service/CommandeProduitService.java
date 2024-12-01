@@ -68,9 +68,16 @@ public class CommandeProduitService {
         }
         return false;
     }
+    @Transactional(readOnly = true)
+    public List<CommandeProduitDto> getCommandeProduitsByCommandeId(Integer commandeId) {
+        return commandeProduitRepository.findByCommandeId(commandeId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
 
     private CommandeProduitDto convertToDto(CommandeProduit commandeProduit) {
-        return new CommandeProduitDto(commandeProduit.getId(), commandeProduit.getCommande().getId(), commandeProduit.getProduit().getId(), commandeProduit.getQuantite(), commandeProduit.getPrix());
+        return new CommandeProduitDto(commandeProduit.getId(), commandeProduit.getCommande().getId(), commandeProduit.getProduit().getId(), commandeProduit.getQuantite());
     }
 
     private CommandeProduit convertToEntity(CommandeProduitDto commandeProduitDto) {
@@ -78,7 +85,6 @@ public class CommandeProduitService {
         commandeProduit.setCommande(commandeRepository.getOne(commandeProduitDto.getCommandeId()));
         commandeProduit.setProduit(produitRepository.getOne(commandeProduitDto.getProduitId()));
         commandeProduit.setQuantite(commandeProduitDto.getQuantite());
-        commandeProduit.setPrix(commandeProduitDto.getPrix());
         return commandeProduit;
     }
 }

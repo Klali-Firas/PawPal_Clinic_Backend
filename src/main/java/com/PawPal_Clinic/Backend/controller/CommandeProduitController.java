@@ -49,4 +49,9 @@ public class CommandeProduitController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/commande/{commandeId}")
+    public ResponseEntity<List<CommandeProduitDto>> getCommandeProduitsByCommandeId(@PathVariable Integer commandeId) {
+        List<CommandeProduitDto> commandeProduits = commandeProduitService.getCommandeProduitsByCommandeId(commandeId);
+        return ResponseEntity.ok(commandeProduits);
+    }
 }
