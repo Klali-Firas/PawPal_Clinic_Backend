@@ -3,9 +3,13 @@ package com.PawPal_Clinic.Backend.controller;
 import com.PawPal_Clinic.Backend.dto.RendezVousDto;
 import com.PawPal_Clinic.Backend.service.RendezVousService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,5 +67,17 @@ public class RendezVousController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(rendezVous);
+    }
+
+    @GetMapping("/export/csv")
+    public ResponseEntity<InputStreamResource> exportRendezVousToCsv() {
+        ByteArrayInputStream byteArrayInputStream = rendezVousService.exportRendezVousToCsv();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=rendezvous_report.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(new InputStreamResource(byteArrayInputStream));
     }
 }

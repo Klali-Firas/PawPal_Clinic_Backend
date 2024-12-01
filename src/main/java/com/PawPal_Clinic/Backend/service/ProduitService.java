@@ -63,7 +63,7 @@ public class ProduitService {
     }
 
     private ProduitDto convertToDto(Produit produit) {
-        return new ProduitDto(produit.getId(), produit.getNomProduit(), produit.getDescription(), produit.getPrix(), produit.getQuantiteStock(), produit.getCreeLe());
+        return new ProduitDto(produit.getId(), produit.getNomProduit(), produit.getDescription(), produit.getPrix(), produit.getQuantiteStock(), produit.getCreeLe(), produit.getImageUrl());
     }
 
     private Produit convertToEntity(ProduitDto produitDto) {
@@ -73,6 +73,7 @@ public class ProduitService {
         produit.setPrix(produitDto.getPrix());
         produit.setQuantiteStock(produitDto.getQuantiteStock());
         produit.setCreeLe(produitDto.getCreeLe());
+        produit.setImageUrl(produitDto.getImage());
         return produit;
     }
 }

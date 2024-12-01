@@ -49,4 +49,10 @@ public class CommandeController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CommandeDto>> getCommandesByUserId(@PathVariable Integer userId) {
+        List<CommandeDto> commandes = commandeService.getCommandesByUserId(userId);
+        return ResponseEntity.ok(commandes);
+    }
 }

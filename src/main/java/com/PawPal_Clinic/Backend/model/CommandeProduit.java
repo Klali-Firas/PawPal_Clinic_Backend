@@ -25,8 +25,7 @@ public class CommandeProduit {
     @Column(name = "quantite", nullable = false)
     private Integer quantite;
 
-    @Column(name = "prix", nullable = false, precision = 10, scale = 2)
-    private BigDecimal prix;
+
 
     public Integer getId() {
         return id;
@@ -60,12 +59,6 @@ public class CommandeProduit {
         this.quantite = quantite;
     }
 
-    public BigDecimal getPrix() {
-        return prix;
-    }
 
-    public void setPrix(BigDecimal prix) {
-        this.prix = prix;
-    }
 
 }

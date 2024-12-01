@@ -4,6 +4,7 @@ import com.PawPal_Clinic.Backend.dto.AviDto;
 import com.PawPal_Clinic.Backend.model.Avi;
 import com.PawPal_Clinic.Backend.repository.AviRepository;
 import com.PawPal_Clinic.Backend.repository.RendezVousRepository;
+import com.PawPal_Clinic.Backend.repository.UtilisateurRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class AviService {
     private AviRepository aviRepository;
     @Autowired
     private RendezVousRepository rendezVousRepository;
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -37,11 +40,22 @@ public class AviService {
                 .map(this::convertToDto);
     }
 
+    @Transactional(readOnly = true)
+    public List<AviDto> getAvisByRendezVousId(Integer rendezVousId) {
+        return aviRepository.findByRendezVousId(rendezVousId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+    @Transactional(readOnly = true)
+    public Optional<AviDto> getAviByRendezVousIdAndProprietaireId(Integer rendezVousId, Integer proprietaireId) {
+        return aviRepository.findByRendezVousIdAndProprietaireId(rendezVousId, proprietaireId)
+                .map(this::convertToDto);
+    }
+
     @Transactional
     public AviDto createAvi(AviDto aviDto) {
         Avi avi = convertToEntity(aviDto);
         Avi savedAvi = aviRepository.save(avi);
-        // Refresh the entity to get the updated value from the database
         entityManager.refresh(savedAvi);
         return convertToDto(savedAvi);
     }
@@ -67,12 +81,13 @@ public class AviService {
     }
 
     private AviDto convertToDto(Avi avi) {
-        return new AviDto(avi.getId(), avi.getRendezVous().getId(), avi.getNote(), avi.getCommentaire(), avi.getCreeLe());
+        return new AviDto(avi.getId(), avi.getRendezVous().getId(), avi.getProprietaire().getId(), avi.getNote(), avi.getCommentaire(), avi.getCreeLe());
     }
 
     private Avi convertToEntity(AviDto aviDto) {
         Avi avi = new Avi();
         avi.setRendezVous(rendezVousRepository.findById(aviDto.getRendezVousId()).orElse(null));
+        avi.setProprietaire(utilisateurRepository.findById(aviDto.getProprietaireId()).orElse(null));
         avi.setNote(aviDto.getNote());
         avi.setCommentaire(aviDto.getCommentaire());
         avi.setCreeLe(aviDto.getCreeLe());

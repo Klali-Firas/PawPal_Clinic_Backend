@@ -1,5 +1,6 @@
 package com.PawPal_Clinic.Backend.service;
 
+import com.PawPal_Clinic.Backend.dto.AviDto;
 import com.PawPal_Clinic.Backend.dto.RendezVousDto;
 import com.PawPal_Clinic.Backend.dto.UtilisateurDto;
 import com.PawPal_Clinic.Backend.model.RendezVous;
@@ -17,7 +18,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -48,6 +50,9 @@ public class RendezVousService {
     private JavaMailSender emailSender;
     @Autowired
     private GoogleCalendarService googleCalendarService;
+
+    @Autowired
+    private AviService aviService;
 
     @Transactional(readOnly = true)
     public List<RendezVousDto> getAllRendezVous() {
@@ -192,5 +197,58 @@ public class RendezVousService {
         rendezVous.setCreeLe(rendezVousDto.getCreeLe());
         rendezVous.setRemarques(rendezVousDto.getRemarques());
         return rendezVous;
+    }
+
+
+    public ByteArrayInputStream exportRendezVousToCsv() {
+        List<RendezVous> rendezVousList = rendezVousRepository.findAll();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+
+        // Write BOM
+        writer.write('\uFEFF');
+
+        // Write CSV header
+        writer.println("Rendez Vous ID,Animal ID,Animal Name,Animal Race,Proprietaire ID,Proprietaire Name,Veterinaire ID,Veterinaire Name,Date RendezVous,Statut,Motif,Cree Le,Remarques,Avis Note,Avis Comment");
+
+        // Write CSV data
+        for (RendezVous rendezVous : rendezVousList) {
+            String animalId = rendezVous.getAnimal().getId().toString();
+            String animalName = rendezVous.getAnimal().getNom() != null ? rendezVous.getAnimal().getNom() : "none";
+            String animalRace = rendezVous.getAnimal().getRace() != null ? rendezVous.getAnimal().getRace() : "none";
+            String proprietaireId = rendezVous.getAnimal().getProprietaire().getId().toString();
+            String proprietaireName = rendezVous.getAnimal().getProprietaire().getNom() + " " + rendezVous.getAnimal().getProprietaire().getPrenom();
+            String veterinaireId = rendezVous.getVeterinaire() != null ? rendezVous.getVeterinaire().getId().toString() : "none";
+            String veterinaireName = rendezVous.getVeterinaire() != null ? rendezVous.getVeterinaire().getNom() + " " + rendezVous.getVeterinaire().getPrenom() : "none";
+            String avisNote = "none";
+            String avisComment = "none";
+
+            Optional<AviDto> avi = aviService.getAviByRendezVousIdAndProprietaireId(rendezVous.getId(), rendezVous.getAnimal().getProprietaire().getId());
+            if (avi.isPresent()) {
+                avisNote = avi.get().getNote().toString();
+                avisComment = avi.get().getCommentaire();
+            }
+
+            writer.println(String.join(",",
+                    rendezVous.getId().toString(),
+                    animalId,
+                    animalName,
+                    animalRace,
+                    proprietaireId,
+                    proprietaireName,
+                    veterinaireId,
+                    veterinaireName,
+                    rendezVous.getDateRendezVous().toString(),
+                    rendezVous.getStatut(),
+                    rendezVous.getMotif().getNomService(),
+                    rendezVous.getCreeLe().toString(),
+                    rendezVous.getRemarques() != null ? rendezVous.getRemarques() : "none",
+                    avisNote,
+                    avisComment
+            ));
+        }
+
+        writer.flush();
+        return new ByteArrayInputStream(out.toByteArray());
     }
 }

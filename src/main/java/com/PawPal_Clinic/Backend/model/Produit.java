@@ -31,6 +31,11 @@ public class Produit {
     @Column(name = "cree_le", insertable = false, updatable = false)
     private Instant creeLe;
 
+    @Column(name = "image_url", length = 255)
+    private String imageUrl;
+
+    // Getters and setters...
+
     public Integer getId() {
         return id;
     }
@@ -79,4 +84,11 @@ public class Produit {
         this.creeLe = creeLe;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

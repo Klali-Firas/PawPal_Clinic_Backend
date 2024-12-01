@@ -19,6 +19,10 @@ public class Avi {
     @JoinColumn(name = "rendez_vous_id", nullable = false)
     private RendezVous rendezVous;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "proprietaire_id", nullable = false)
+    private Utilisateur proprietaire;
+
     @Column(name = "note")
     private Integer note;
 
@@ -26,9 +30,10 @@ public class Avi {
     private String commentaire;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "cree_le",updatable = false, insertable = false)
+    @Column(name = "cree_le", updatable = false, insertable = false)
     private Instant creeLe;
 
+    // Getters and setters for all fields, including proprietaire
     public Integer getId() {
         return id;
     }
@@ -43,6 +48,14 @@ public class Avi {
 
     public void setRendezVous(RendezVous rendezVous) {
         this.rendezVous = rendezVous;
+    }
+
+    public Utilisateur getProprietaire() {
+        return proprietaire;
+    }
+
+    public void setProprietaire(Utilisateur proprietaire) {
+        this.proprietaire = proprietaire;
     }
 
     public Integer getNote() {
@@ -68,5 +81,4 @@ public class Avi {
     public void setCreeLe(Instant creeLe) {
         this.creeLe = creeLe;
     }
-
 }

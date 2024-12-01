@@ -4,19 +4,18 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * DTO for {@link com.PawPal_Clinic.Backend.model.Avi}
- */
 public class AviDto implements Serializable {
     private Integer id;
     private Integer rendezVousId;
+    private Integer proprietaireId;
     private Integer note;
     private String commentaire;
     private Instant creeLe;
 
-    public AviDto(Integer id, Integer rendezVousId, Integer note, String commentaire, Instant creeLe) {
+    public AviDto(Integer id, Integer rendezVousId, Integer proprietaireId, Integer note, String commentaire, Instant creeLe) {
         this.id = id;
         this.rendezVousId = rendezVousId;
+        this.proprietaireId = proprietaireId;
         this.note = note;
         this.commentaire = commentaire;
         this.creeLe = creeLe;
@@ -31,6 +30,10 @@ public class AviDto implements Serializable {
 
     public Integer getRendezVousId() {
         return rendezVousId;
+    }
+
+    public Integer getProprietaireId() {
+        return proprietaireId;
     }
 
     public Integer getNote() {
@@ -52,6 +55,7 @@ public class AviDto implements Serializable {
         AviDto entity = (AviDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.rendezVousId, entity.rendezVousId) &&
+                Objects.equals(this.proprietaireId, entity.proprietaireId) &&
                 Objects.equals(this.note, entity.note) &&
                 Objects.equals(this.commentaire, entity.commentaire) &&
                 Objects.equals(this.creeLe, entity.creeLe);
@@ -59,7 +63,7 @@ public class AviDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rendezVousId, note, commentaire, creeLe);
+        return Objects.hash(id, rendezVousId, proprietaireId, note, commentaire, creeLe);
     }
 
     @Override
@@ -67,6 +71,7 @@ public class AviDto implements Serializable {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "rendezVousId = " + rendezVousId + ", " +
+                "proprietaireId = " + proprietaireId + ", " +
                 "note = " + note + ", " +
                 "commentaire = " + commentaire + ", " +
                 "creeLe = " + creeLe + ")";
