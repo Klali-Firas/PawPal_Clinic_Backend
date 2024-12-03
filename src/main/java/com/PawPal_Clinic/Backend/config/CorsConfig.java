@@ -1,5 +1,6 @@
 package com.PawPal_Clinic.Backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -8,12 +9,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class CorsConfig {
+    @Value("${front.url}")
+    private String frontUrl;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);  // Allow credentials for specific origin
         config.addAllowedOrigin("http://localhost:4200"); // Allow only your front-end origin
+        config.addAllowedOrigin(frontUrl); // Allow only your front-end origin
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 

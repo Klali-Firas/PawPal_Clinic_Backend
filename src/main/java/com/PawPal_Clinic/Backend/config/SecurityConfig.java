@@ -1,6 +1,7 @@
 package com.PawPal_Clinic.Backend.config;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.client.web.DefaultOAuth2Authorization
 
 @Configuration
 public class SecurityConfig {
+    @Value("${front.url}")
+    private String frontUrl;
 
     private final CorsConfigurationSource corsConfigurationSource;
     private final ClientRegistrationRepository clientRegistrationRepository;
@@ -36,7 +39,7 @@ public class SecurityConfig {
                         .authorizationEndpoint(authorization -> authorization
                                 .authorizationRequestResolver(authorizationRequestResolver(clientRegistrationRepository))
                         )
-                        .defaultSuccessUrl("http://localhost:4200/home", true)
+                        .defaultSuccessUrl(frontUrl+"/home", true)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

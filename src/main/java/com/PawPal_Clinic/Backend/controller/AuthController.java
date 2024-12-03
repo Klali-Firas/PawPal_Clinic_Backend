@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")  // Replace with your frontend's origin
+@CrossOrigin(origins = "${front.url}")  // Replace with your frontend's origin
 public class AuthController {
 
     @Autowired
