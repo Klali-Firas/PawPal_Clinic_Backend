@@ -84,6 +84,7 @@ public class AnimauxService {
 
     private Animaux convertToEntity(AnimauxDto dto) {
         Animaux animaux = new Animaux();
+        animaux.setCreeLe(dto.getCreeLe());
         animaux.setNom(dto.getNom());
         animaux.setRace(dto.getRace());
         animaux.setAge(dto.getAge());

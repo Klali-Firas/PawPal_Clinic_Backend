@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))  // Apply CORS configurations
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
-                        .requestMatchers("/", "/api/public/**").permitAll()
+                        .requestMatchers("/", "/api/public/**","/verifyGoogleIdToken").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/logout").ignoringRequestMatchers("/api/**") // Disable CSRF for the logout endpoint
+                        .ignoringRequestMatchers("/logout").ignoringRequestMatchers("/api/**").ignoringRequestMatchers("/verifyGoogleIdToken") // Disable CSRF for the logout endpoint
                 );
 
         return http.build();
