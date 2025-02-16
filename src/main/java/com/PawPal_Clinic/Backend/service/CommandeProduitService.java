@@ -2,6 +2,7 @@ package com.PawPal_Clinic.Backend.service;
 
 import com.PawPal_Clinic.Backend.dto.CommandeProduitDto;
 import com.PawPal_Clinic.Backend.model.CommandeProduit;
+import com.PawPal_Clinic.Backend.model.Produit;
 import com.PawPal_Clinic.Backend.repository.CommandeProduitRepository;
 import com.PawPal_Clinic.Backend.repository.CommandeRepository;
 import com.PawPal_Clinic.Backend.repository.ProduitRepository;
@@ -44,6 +45,13 @@ public class CommandeProduitService {
     @Transactional
     public CommandeProduitDto createCommandeProduit(CommandeProduitDto commandeProduitDto) {
         CommandeProduit commandeProduit = convertToEntity(commandeProduitDto);
+
+        // Update the stock of the product
+        Produit produit = commandeProduit.getProduit();
+        int newStock = produit.getQuantiteStock() - commandeProduit.getQuantite();
+        produit.setQuantiteStock(newStock);
+        produitRepository.save(produit);
+
         CommandeProduit savedCommandeProduit = commandeProduitRepository.save(commandeProduit);
         entityManager.refresh(savedCommandeProduit);
         return convertToDto(savedCommandeProduit);

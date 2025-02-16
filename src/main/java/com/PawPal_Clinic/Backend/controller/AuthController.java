@@ -112,7 +112,6 @@ public class AuthController {
             System.out.println(idToken);
             if (idToken != null) {
                 GoogleIdToken.Payload payload = idToken.getPayload();
-
                 String email = payload.getEmail();
                 String prenom = (String) payload.get("given_name");
                 String nom = (String) payload.get("family_name");
